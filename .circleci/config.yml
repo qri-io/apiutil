@@ -1,0 +1,28 @@
+version: '2'
+jobs:
+  build:
+    working_directory: /go/src/github.com/qri-io/apiutil
+    docker:
+      - image: circleci/golang:1.12
+        environment:
+          GO111MODULE: "on"
+    environment:
+      TEST_RESULTS: /tmp/test-results
+    steps:
+      - checkout
+      - run: mkdir -p $TEST_RESULTS
+      - run: 
+          name: Get CI Deps
+          command: go get github.com/jstemmer/go-junit-report golang.org/x/lint/golint
+      - run: 
+          name: Go Lint
+          command: golint -set_exit_status ./...
+      - run: 
+          name: Go Vet
+          command: go vet
+      - run:
+          name: Run Tests
+          command: go test -v -race -coverprofile=coverage.txt -covermode=atomic
+      - run:
+          name: Publish coverage info to codecov.io
+          command: bash <(curl -s https://codecov.io/bash)
