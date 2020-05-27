@@ -6,14 +6,27 @@ import (
 )
 
 // ReqParamInt extracts an integer parameter from a request form value
-// TODO - consider providing a default param & removing the error
-func ReqParamInt(key string, r *http.Request) (int, error) {
-	i, err := strconv.ParseInt(r.FormValue(key), 10, 0)
-	return int(i), err
+func ReqParamInt(r *http.Request, key string, def int) int {
+	v := r.FormValue(key)
+	if v == "" {
+		return def
+	}
+	i, err := strconv.ParseInt(v, 10, 0)
+	if err != nil {
+		return def
+	}
+	return int(i)
 }
 
 // ReqParamBool pulls a boolean parameter from a request form value
-// TODO - consider providing a default param & removing the error
-func ReqParamBool(key string, r *http.Request) (bool, error) {
-	return strconv.ParseBool(r.FormValue(key))
+func ReqParamBool(r *http.Request, key string, def bool) bool {
+	v := r.FormValue(key)
+	if v == "" {
+		return def
+	}
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		return def
+	}
+	return b
 }

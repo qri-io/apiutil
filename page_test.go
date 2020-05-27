@@ -1,6 +1,7 @@
 package apiutil
 
 import (
+	"fmt"
 	"net/http/httptest"
 	"strconv"
 	"testing"
@@ -58,6 +59,44 @@ func TestNewPageFromLimitAndOffset(t *testing.T) {
 		}
 		if c.expSize != got.Size {
 			t.Errorf("case '%s' error: size mismatch, expected '%d', got '%d'", c.description, c.expSize, got.Size)
+		}
+	}
+}
+
+func TestNextPageExists(t *testing.T) {
+	cases := []struct {
+		number, size, resultCount int
+		expect                    bool
+	}{
+		{1, 50, 0, true},
+		{1, 50, 51, true},
+		{1, 50, 50, false},
+		{1, 50, 35, false},
+	}
+
+	for _, c := range cases {
+		t.Run(fmt.Sprintf("num_%d_size_%d_count_%d=%t", c.number, c.size, c.resultCount, c.expect), func(t *testing.T) {
+			p := Page{Number: c.number, Size: c.size, ResultCount: c.resultCount}
+			got := p.NextPageExists()
+			if c.expect != got {
+				t.Errorf("result mismatch. expected: %t got: %t", c.expect, got)
+			}
+		})
+	}
+}
+
+func TestPrevPageExists(t *testing.T) {
+	for _, num := range []int{2, 3, 4} {
+		p := Page{Number: num}
+		if !p.PrevPageExists() {
+			t.Errorf("expected true for %d value, got false", num)
+		}
+	}
+
+	for _, num := range []int{-1, 0, -20} {
+		p := Page{Number: num}
+		if p.PrevPageExists() {
+			t.Errorf("expected false for %d value, got true", num)
 		}
 	}
 }
