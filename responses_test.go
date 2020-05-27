@@ -13,20 +13,24 @@ func TestWritePageResponse(t *testing.T) {
 		expect string
 	}{
 		{
-			Page{Number: 1, Size: 50},
+			Page{Number: 1, Size: DefaultPageSize},
 			`{"data":"data","meta":{"code":200},"pagination":{"page":1,"pageSize":50,"nextUrl":"https://example.com?page=2","prevUrl":""}}`,
 		},
 		{
-			Page{Number: 1, Size: 50, ResultCount: 200},
+			Page{Number: 1, Size: DefaultPageSize, ResultCount: 200},
 			`{"data":"data","meta":{"code":200},"pagination":{"page":1,"pageSize":50,"resultCount":200,"nextUrl":"https://example.com?page=2","prevUrl":""}}`,
 		},
 		{
-			Page{Number: 2, Size: 50, ResultCount: 100},
+			Page{Number: 2, Size: DefaultPageSize, ResultCount: 100},
 			`{"data":"data","meta":{"code":200},"pagination":{"page":2,"pageSize":50,"resultCount":100,"nextUrl":"","prevUrl":"https://example.com?page=1"}}`,
 		},
 		{
-			Page{Number: 2, Size: 50, ResultCount: 200},
+			Page{Number: 2, Size: DefaultPageSize, ResultCount: 200},
 			`{"data":"data","meta":{"code":200},"pagination":{"page":2,"pageSize":50,"resultCount":200,"nextUrl":"https://example.com?page=3","prevUrl":"https://example.com?page=1"}}`,
+		},
+		{
+			Page{Number: 2, Size: 5, ResultCount: 200},
+			`{"data":"data","meta":{"code":200},"pagination":{"page":2,"pageSize":5,"resultCount":200,"nextUrl":"https://example.com?page=3\u0026pageSize=5","prevUrl":"https://example.com?page=1\u0026pageSize=5"}}`,
 		},
 	}
 

@@ -76,6 +76,10 @@ func (p Page) Prev() Page {
 func (p Page) SetQueryParams(u *url.URL) *url.URL {
 	q := u.Query()
 	q.Set("page", strconv.Itoa(p.Number))
+	if p.Size != DefaultPageSize {
+		q.Set("pageSize", strconv.Itoa(p.Size))
+	}
+
 	u.RawQuery = q.Encode()
 	return u
 }
