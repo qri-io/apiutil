@@ -3,7 +3,6 @@ package apiutil
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 )
 
 // WriteResponse wraps response data in an envelope & writes it
@@ -20,30 +19,21 @@ func WriteResponse(w http.ResponseWriter, data interface{}) error {
 // WritePageResponse wraps response data and pagination information in an
 // envelope and writes it
 func WritePageResponse(w http.ResponseWriter, data interface{}, r *http.Request, p Page) error {
+	if p.PrevPageExists() {
+		p.PrevURL = p.Prev().SetQueryParams(r.URL).String()
+	}
+	if p.NextPageExists() {
+		p.NextURL = p.Next().SetQueryParams(r.URL).String()
+	}
+
 	env := map[string]interface{}{
 		"meta": map[string]interface{}{
 			"code": http.StatusOK,
 		},
-		"data": data,
-		"pagination": map[string]interface{}{
-			"nextUrl": nextPageURL(r, p),
-		},
+		"data":       data,
+		"pagination": p,
 	}
 	return jsonResponse(w, env)
-}
-
-func nextPageURL(r *http.Request, p Page) string {
-	q := r.URL.Query()
-	pageNum := 1
-	if val, ok := q["page"]; ok {
-		var err error
-		if pageNum, err = strconv.Atoi(val[0]); err != nil {
-			return r.URL.String()
-		}
-	}
-	q.Set("page", strconv.Itoa(pageNum+1))
-	r.URL.RawQuery = q.Encode()
-	return r.URL.String()
 }
 
 // WriteMessageResponse includes a message with a data response
