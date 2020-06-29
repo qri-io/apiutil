@@ -1,3 +1,19 @@
+<a name="v0.2.0"></a>
+# [v0.2.0](https://github.com/qri-io/apiutil/compare/v0.1.0...v0.2.0) (2020-06-29)
+
+
+### Bug Fixes
+
+* **page:** write pageSize to url query params when non-default ([198e5f3](https://github.com/qri-io/apiutil/commit/198e5f3))
+
+
+### Features
+
+* **orderby:** added util for orderBy support in api calls ([3a356e3](https://github.com/qri-io/apiutil/commit/3a356e3))
+* **resultCount:** Page has a resultCount value, rework package API ([4923244](https://github.com/qri-io/apiutil/commit/4923244))
+
+
+
 <a name="v0.1.0"></a>
 #  (2019-05-31)
 
